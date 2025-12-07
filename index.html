@@ -23,6 +23,7 @@
             <option value="Room 102">Room 102</option>
             <option value="Computer Lab A">Computer Lab A</option>
             <option value="AVR Hall">AVR Hall</option>
+            <option value="Gymnasium">Gymnasium</option>
         </select>
 
         <label class="block mt-4 font-medium">Date</label>
@@ -31,7 +32,10 @@
         <label class="block mt-4 font-medium">Time</label>
         <input type="time" id="time" class="w-full p-3 border rounded-lg mt-1" />
 
-        <button onclick="addReservation()" class="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white p-3 rounded-lg font-semibold">Submit Reservation</button>
+        <button onclick="addReservation()" 
+            class="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white p-3 rounded-lg font-semibold">
+            Submit Reservation
+        </button>
 
         <div class="reservation-list mt-10">
             <h2 class="text-xl font-semibold mb-3">Reservations</h2>
@@ -51,25 +55,35 @@
                 return;
             }
 
-           fetch('http://127.0.0.1:5000/reserve', {
+            fetch('http://127.0.0.1:5000/reserve', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, room, date, time })
             })
             .then(response => response.json())
             .then(data => {
+                if (data.error) {
+                    alert(data.error);  // shows the error from backend
+                    return;
+                }
+
                 const list = document.getElementById('list');
                 const item = document.createElement('div');
                 item.className = 'p-4 bg-blue-100 border border-blue-300 rounded-lg';
-                item.innerHTML = `<strong>${data.data.name}</strong> reserved <strong>${data.data.room}</strong> on <strong>${data.data.date}</strong> at <strong>${data.data.time}</strong>`;
+                item.innerHTML = `<strong>${data.data.name}</strong> reserved 
+                                  <strong>${data.data.room}</strong> on 
+                                  <strong>${data.data.date}</strong> at 
+                                  <strong>${data.data.time}</strong>`;
                 list.appendChild(item);
 
+                // Clear form
                 document.getElementById('name').value = '';
                 document.getElementById('date').value = '';
                 document.getElementById('time').value = '';
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
         }
     </script>
+
 </body>
 </html>
